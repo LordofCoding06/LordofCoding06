@@ -1,8 +1,6 @@
 <h2> Hi, I'm Lars Stalder! <img src="https://media.giphy.com/media/mGcNjsfWAjY5AEZNw6/giphy.gif" width="50"></h2>
 
 ```sql
--- 👨‍💻 Mini Portfolio Easter Egg – PL/SQL Edition
-
 DROP TYPE t_dev FORCE;
 /
 
