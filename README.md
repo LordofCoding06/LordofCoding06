@@ -5,34 +5,37 @@ DROP TYPE t_dev FORCE;
 /
 
 CREATE TYPE t_dev AS OBJECT (
-    name   VARCHAR2(50),
-    role   VARCHAR2(50),
-    langs  SYS.ODCIVARCHAR2LIST,
-    MEMBER PROCEDURE say_hi
+  name   VARCHAR2(50),
+  role   VARCHAR2(50),
+  langs  SYS.ODCIVARCHAR2LIST,
+  MEMBER PROCEDURE say_hi
 );
 /
 
 CREATE TYPE BODY t_dev AS
-    MEMBER PROCEDURE say_hi IS
-    BEGIN
-        DBMS_OUTPUT.PUT_LINE('👋 Hi! I''m ' || name || ', your friendly ' || role || '.');
-        DBMS_OUTPUT.PUT_LINE('🌍 I speak: ' ||
-                             LISTAGG(COLUMN_VALUE, ', ')
-                             WITHIN GROUP (ORDER BY 1)
-                             FROM TABLE(langs));
-        DBMS_OUTPUT.PUT_LINE('☕ Coffee level: OVER 9000.');
-    END;
+  MEMBER PROCEDURE say_hi IS
+    l_langs VARCHAR2(4000);
+  BEGIN
+    SELECT LISTAGG(COLUMN_VALUE, ', ')
+             WITHIN GROUP (ORDER BY COLUMN_VALUE)
+      INTO l_langs
+      FROM TABLE(SELF.langs);
+
+    DBMS_OUTPUT.PUT_LINE('👋 Hi! I''m ' || name || ', your friendly ' || role || '.');
+    DBMS_OUTPUT.PUT_LINE('🌍 I speak: ' || NVL(l_langs, '(none)'));
+    DBMS_OUTPUT.PUT_LINE('☕ Coffee level: OVER 9000.');
+  END;
 END;
 /
 
 DECLARE
-    me t_dev := t_dev(
-                  'Lars Stalder',
-                  'Database App Developer',
-                  SYS.ODCIVARCHAR2LIST('zh_CN','en_US','de_CH')
-              );
+  me t_dev := t_dev(
+    'Lars Stalder',
+    'Database App Developer',
+    SYS.ODCIVARCHAR2LIST('de_CH','en_GB','fr_CH')
+  );
 BEGIN
-    me.say_hi;
+  me.say_hi;
 END;
 /
 ```
